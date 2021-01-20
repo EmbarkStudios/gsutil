@@ -1,0 +1,40 @@
+[package]
+name = "gsutil"
+description = "Incomplete replacement for the official gsutil"
+version = "0.1.0"
+authors = ["Embark <opensource@embark-studios.com>", "Jake Shadle <jake.shadle@embark-studios.com>"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+documentation = "https://docs.rs/gsutil"
+homepage = "https://github.com/EmbarkStudios/gsutil"
+repository = "https://github.com/EmbarkStudios/gsutil"
+categories = ["command-line-utilities"]
+keywords = ["gcs", "ci"]
+
+[dependencies]
+# Colors!
+ansi_term = "0.11"
+# Friendly error handling
+anyhow = "1.0"
+# Buffer helpers
+bytes = "1.0"
+# For futures helpers
+futures-util = { version = "0.3", default-features = false }
+# Human friendly byte sizes
+number_prefix = "0.4"
+# For HTTP requests
+reqwest = { version = "0.11", default-features = false, features = ["rustls-tls", "stream"] }
+# JSON serialization
+serde_json = "1.0"
+# Signing urls
+#ring = "0.16"
+# Argument parsing
+structopt = "0.3"
+# GCS requests
+tame-gcs = { version = "0.9", features = ["signing"] }
+# Authentication
+tame-oauth = { version = "0.4", features = ["gcp"] }
+# Async runtime
+tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+# Url parsing
+url = "2.2"

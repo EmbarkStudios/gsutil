@@ -1,23 +1,30 @@
-<!--- FIXME: Pick an emoji! --->
-# 🌻 opensource-template
+# 🚙 gsutil
 
-<!--- FIXME: Update crate, repo and CI workflow names here! Remove any that are not relevant --->
 [![Embark](https://img.shields.io/badge/embark-open%20source-blueviolet.svg)](https://embark.dev)
 [![Embark](https://img.shields.io/badge/discord-ark-%237289da.svg?logo=discord)](https://discord.gg/dAuKfZS)
-[![Crates.io](https://img.shields.io/crates/v/rust-gpu.svg)](https://crates.io/crates/rust-gpu)
-[![Docs](https://docs.rs/rust-gpu/badge.svg)](https://docs.rs/rust-gpu)
-[![dependency status](https://deps.rs/repo/github/EmbarkStudios/rust-gpu/status.svg)](https://deps.rs/repo/github/EmbarkStudios/rust-gpu)
-[![Build status](https://github.com/EmbarkStudios/physx-rs/workflows/CI/badge.svg)](https://github.com/EmbarkStudios/physx-rs/actions)
+[![Crates.io](https://img.shields.io/crates/v/gsutil.svg)](https://crates.io/crates/gsutil)
+[![Docs](https://docs.rs/gsutil/badge.svg)](https://docs.rs/gsutil)
+[![dependency status](https://deps.rs/repo/github/EmbarkStudios/gsutil/status.svg)](https://deps.rs/repo/github/EmbarkStudios/gsutil)
+[![Build status](https://github.com/EmbarkStudios/gsutil/workflows/CI/badge.svg)](https://github.com/EmbarkStudios/gsutil/actions)
 
-Template for creating new open source repositories that follow the Embark open source guidelines.
+A small, incomplete replacement for the official [gsutil](https://cloud.google.com/storage/docs/gsutil).
 
-## TEMPLATE INSTRUCTIONS
+## Why?
 
-1. Create a new repository under EmbarkStudios using this template.
-1. __Title:__ Change the first line of this README to the name of your project, and replace the sunflower with an emoji that represents your project. 🚨 Your emoji selection is critical.
-1. __Badges:__ In the badges section above, change the repo name in each URL. If you are creating something other than a Rust crate, remove the crates.io and docs badges (and feel free to add more appropriate ones for your language).
-1. __CI:__ In `./github/workflows/` rename `rust-ci.yml` (or the appropriate config for your language) to `ci.yml`. And go over it and adapt it to work for your project
-1. __Cleanup:__ Remove this section of the README and any unused files (such as configs for other languages) from the repo.
+* You need to do basic GCS operations like uploading some objects for eg. CD, and don't need to do every possible thing you can do with GCS.
+* You want a single binary with 0 system dependencies and a minimal footprint (the gcloud/gsutil install is over 100MiB, compressed, in addition to requiring a Python install)
+
+## Why not?
+
+* This binary only supports some operations, listed below, if you need other operations they need to be added, or you must use the official gsutil.
+
+## Supported subcommands
+
+* [cat](src/cat.rs) - [Downloads](https://docs.rs/tame-gcs/latest/tame_gcs/objects/struct.Object.html#method.download) and prints an object to stdout.
+* [cp](src/cp.rs) - Either [downloads](https://docs.rs/tame-gcs/latest/tame_gcs/objects/struct.Object.html#method.download) an Object and stores it in a local file, or [uploads](https://docs.rs/tame-gcs/latest/tame_gcs/objects/struct.Object.html#method.insert_multipart) a local file as an Object.
+* [ls](src/ls.rs) - [Lists](https://docs.rs/tame-gcs/latest/tame_gcs/objects/struct.Object.html#method.list) Objects.
+* [signurl](src/signurl.rs) - [Creates](https://docs.rs/tame-gcs/latest/tame_gcs/signed_url/struct.UrlSigner.html) a signed url for an Object.
+* [stat](src/stat.rs) - [Shows](https://docs.rs/tame-gcs/latest/tame_gcs/objects/struct.Object.html#method.get) metadata for an Object.
 
 ## Contribution
 
