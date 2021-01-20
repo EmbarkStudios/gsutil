@@ -106,7 +106,7 @@ jobs:
       - name: Package
         shell: bash
         run: |
-          name=$BIN_NAME
+          name=gsutil
           tag=$(git describe --tags --abbrev=0)
           release_name="$name-$tag-${{ matrix.target }}"
           release_tar="${release_name}.tar.gz"
@@ -133,6 +133,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           draft: true
-          files: "$BIN_NAME*"
+          files: "gsutil*"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
