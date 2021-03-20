@@ -61,7 +61,7 @@ pub async fn cmd(ctx: &util::RequestContext, args: Args) -> Result<(), Error> {
 
             let obj_name = format!(
                 "{}{}{}",
-                dst.object().map(|on| on.as_ref()).unwrap_or(""),
+                dst.object().map_or("", |on| on.as_ref()),
                 if dst.object().is_some() { "/" } else { "" },
                 src.file_name()
                     .as_ref()

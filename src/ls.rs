@@ -23,12 +23,12 @@ pub struct Args {
 
 /// Does an ls of a gs bucket minus the prefix specified by the user, this
 /// tries to mimic [exa](https://github.com/ogham/exa) when it can. Would also
-/// be good to support https://github.com/ogham/exa/blob/master/src/info/filetype.rs at some point
+/// be good to support <https://github.com/ogham/exa/blob/master/src/info/filetype.rs> at some point
 pub async fn cmd(ctx: &util::RequestContext, args: Args) -> Result<(), Error> {
     let oid = util::gs_url_to_object_id(&args.url)?;
 
     let delimiter = if args.recurse { None } else { Some("/") };
-    let mut prefix = oid.object().map(|on| on.as_ref()).unwrap_or("").to_owned();
+    let mut prefix = oid.object().map_or("", |on| on.as_ref()).to_owned();
     if !prefix.is_empty() && !prefix.ends_with('/') {
         prefix.push('/')
     }
@@ -137,8 +137,7 @@ impl NormalPrinter {
 
             // So yah...just assume these are always in sorted order...
             for prefix in &prefixes {
-                if let Err(i) = items.binary_search_by(|om| om.name.as_ref().unwrap().cmp(&prefix))
-                {
+                if let Err(i) = items.binary_search_by(|om| om.name.as_ref().unwrap().cmp(prefix)) {
                     indices.push(i);
                 }
             }
