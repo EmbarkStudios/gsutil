@@ -3,7 +3,7 @@ use std::{convert::TryInto, sync::Arc};
 use tame_gcs::http;
 use tame_oauth::gcp as oauth;
 
-/// Converts a vanilla http::Request into a reqwest::Request
+/// Converts a vanilla `http::Request` into a `reqwest::Request`
 async fn convert_request<B>(
     req: http::Request<B>,
     client: &reqwest::Client,
@@ -21,7 +21,7 @@ where
         http::Method::DELETE => client.delete(&uri),
         http::Method::PATCH => client.patch(&uri),
         http::Method::PUT => client.put(&uri),
-        method => unimplemented!("{} not implemented", method),
+        method => return Err(anyhow!("{} not implemented", method)),
     };
 
     let content_len = tame_gcs::util::get_content_length(&parts.headers).unwrap_or(0);
@@ -45,7 +45,7 @@ where
         .build()?)
 }
 
-/// Converts a reqwest::Response into a vanilla http::Response. This currently copies
+/// Converts a `reqwest::Response` into a vanilla `http::Response`. This currently copies
 /// the entire response body into a single buffer with no streaming
 async fn convert_response(res: reqwest::Response) -> Result<http::Response<bytes::Bytes>, Error> {
     let mut builder = http::Response::builder()
@@ -62,7 +62,7 @@ async fn convert_response(res: reqwest::Response) -> Result<http::Response<bytes
             .map(|(k, v)| (k.clone(), v.clone())),
     );
 
-    let content_len = tame_gcs::util::get_content_length(&headers).unwrap_or_default();
+    let content_len = tame_gcs::util::get_content_length(headers).unwrap_or_default();
     let mut buffer = bytes::BytesMut::with_capacity(content_len);
 
     let mut stream = res.bytes_stream();
