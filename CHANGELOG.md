@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-header -->
 ## [Unreleased]
+### Added
+- [PR#3](https://github.com/EmbarkStudios/gsutil/pull/3) added support for the `-a` flag on the [`cp`](https://cloud.google.com/storage/docs/gsutil/commands/cp) command, allowing you to specify a predefined ACL for the destination GCS object.
+
+### Fixed
+- [PR#3](https://github.com/EmbarkStudios/gsutil/pull/3) fixed a bug on the `cp` command which would duplicate the file name component in the destination GCS object.
 
 ## [0.1.0] - 2021-01-19
 
