@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
+## [0.1.1] - 2021-03-23
 ### Added
 - [PR#3](https://github.com/EmbarkStudios/gsutil/pull/3) added support for the `-a` flag on the [`cp`](https://cloud.google.com/storage/docs/gsutil/commands/cp) command, allowing you to specify a predefined ACL for the destination GCS object.
 
@@ -20,5 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial add of `gsutil`, mostly ported from [tame-gcs](https://github.com/EmbarkStudios/tame-gcs) examples.
 
 <!-- next-url -->
-[Unreleased]: https://github.com/EmbarkStudios/gsutil/compare/0.1.0...HEAD
+[Unreleased]: https://github.com/EmbarkStudios/gsutil/compare/0.1.1...HEAD
+[0.1.1]: https://github.com/EmbarkStudios/gsutil/compare/0.1.0...0.1.1
 [0.1.0]: https://github.com/EmbarkStudios/gsutil/releases/tag/0.1.0

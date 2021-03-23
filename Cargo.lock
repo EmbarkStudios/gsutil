@@ -185,7 +185,7 @@ dependencies = [
 
 [[package]]
 name = "gsutil"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "ansi_term",
  "anyhow",
