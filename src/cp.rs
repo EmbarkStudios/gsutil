@@ -4,8 +4,25 @@ use std::{convert::TryFrom, path::PathBuf};
 use structopt::StructOpt;
 use tame_gcs::objects::{self, Metadata, Object};
 
+fn parse_acl(s: &str) -> Result<tame_gcs::common::PredefinedAcl, String> {
+    use tame_gcs::common::PredefinedAcl as Acl;
+
+    Ok(match s {
+        "project-private" => Acl::ProjectPrivate,
+        "private" => Acl::Private,
+        "public-read" => Acl::PublicRead,
+        "authenticated-read" => Acl::AuthenticatedRead,
+        "bucket-owner-read" => Acl::BucketOwnerRead,
+        "bucket-owner-full-control" => Acl::BucketOwnerFullControl,
+        other => return Err(format!("unknown ACL '{}'", other)),
+    })
+}
+
 #[derive(StructOpt, Debug)]
 pub struct Args {
+    /// Predefined ACL to apply to the destination GCS object
+    #[structopt(short = "a", parse(try_from_str = parse_acl))]
+    predef_acl: Option<tame_gcs::common::PredefinedAcl>,
     /// A gs: URL or filepath for the source path to copy from,
     /// wildcards are not currently supported
     src_url: String,
@@ -59,25 +76,21 @@ pub async fn cmd(ctx: &util::RequestContext, args: Args) -> Result<(), Error> {
             let src_file = fs::File::open(src).context("source path")?;
             let src_len = src_file.metadata()?.len();
 
-            let obj_name = format!(
-                "{}{}{}",
-                dst.object().map_or("", |on| on.as_ref()),
-                if dst.object().is_some() { "/" } else { "" },
-                src.file_name()
-                    .as_ref()
-                    .and_then(|os| os.to_str())
-                    .ok_or_else(|| anyhow!("can't turn file_name into string"))?
-            );
+            let optional = args.predef_acl.map(|acl| objects::InsertObjectOptional {
+                predefined_acl: Some(acl),
+                ..Default::default()
+            });
+
             let insert_req = Object::insert_multipart(
                 dst.bucket(),
                 src_file,
                 src_len,
                 &Metadata {
-                    name: Some(obj_name),
+                    name: dst.object().map(|obn| obn.to_string()),
                     content_encoding: Some("identity".to_owned()),
                     ..Default::default()
                 },
-                None,
+                optional,
             )?;
 
             let _insert_res: objects::InsertResponse = util::execute(ctx, insert_req).await?;
