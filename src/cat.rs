@@ -1,10 +1,9 @@
 use crate::util;
-use structopt::StructOpt;
 use tame_gcs::{http, objects::Object};
 
-#[derive(StructOpt, Debug)]
+#[derive(clap::Parser, Debug)]
 pub struct Args {
-    #[structopt(
+    #[clap(
         short,
         allow_hyphen_values = true,
         long_help = "Causes gsutil to output just the specified byte range of the object.

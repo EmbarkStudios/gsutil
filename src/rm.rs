@@ -1,8 +1,7 @@
 use crate::util;
-use structopt::StructOpt;
 use tame_gcs::objects::Object;
 
-#[derive(StructOpt, Debug)]
+#[derive(clap::Parser, Debug)]
 pub struct Args {
     /// The gs:// url to the object
     url: url::Url,

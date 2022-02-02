@@ -1,4 +1,6 @@
-# 🚙 gsutil
+<div align="center">
+
+# `🚙 gsutil`
 
 [![Embark](https://img.shields.io/badge/embark-open%20source-blueviolet.svg)](https://embark.dev)
 [![Embark](https://img.shields.io/badge/discord-ark-%237289da.svg?logo=discord)](https://discord.gg/dAuKfZS)
@@ -8,6 +10,8 @@
 [![Build status](https://github.com/EmbarkStudios/gsutil/workflows/CI/badge.svg)](https://github.com/EmbarkStudios/gsutil/actions)
 
 A small, incomplete replacement for the official [gsutil](https://cloud.google.com/storage/docs/gsutil).
+
+</div>
 
 ## Why?
 
@@ -28,7 +32,7 @@ A small, incomplete replacement for the official [gsutil](https://cloud.google.c
 
 ## Contribution
 
-[![Contributor Covenant](https://img.shields.io/badge/contributor%20covenant-v1.4-ff69b4.svg)](../main/CODE_OF_CONDUCT.md)
+[![Contributor Covenant](https://img.shields.io/badge/contributor%20covenant-v1.4-ff69b4.svg)](CODE_OF_CONDUCT.md)
 
 We welcome community contributions to this project.
 
@@ -41,8 +45,8 @@ Any contribution intentionally submitted for inclusion in an Embark Studios proj
 
 This [contribution] is dual licensed under EITHER OF
 
-* Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
-* MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+* Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or <http://www.apache.org/licenses/LICENSE-2.0>)
+* MIT license ([LICENSE-MIT](LICENSE-MIT) or <http://opensource.org/licenses/MIT>)
 
 at your option.
 

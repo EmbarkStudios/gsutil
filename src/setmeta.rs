@@ -1,9 +1,8 @@
 use crate::util;
 use anyhow::Error;
-use structopt::StructOpt;
 use tame_gcs::objects::Object;
 
-#[derive(StructOpt, Debug)]
+#[derive(clap::Parser, Debug)]
 pub struct Args {
     /// A valid JSON payload for the metadata to set
     json: String,
@@ -34,11 +33,17 @@ pub async fn cmd(ctx: &util::RequestContext, args: Args) -> Result<(), Error> {
     println!("{}", ansi_term::Color::Cyan.paint(args.url.as_str()));
     println!(
         "    Creation time:\t{}",
-        md.time_created.expect("time_created").to_rfc2822()
+        md.time_created
+            .expect("time_created")
+            .format(&time::format_description::well_known::Rfc2822)
+            .unwrap()
     );
     println!(
         "    Update time:\t{}",
-        md.updated.expect("updated").to_rfc2822()
+        md.updated
+            .expect("updated")
+            .format(&time::format_description::well_known::Rfc2822)
+            .unwrap()
     );
     println!(
         "    Storage class:\t{}",

@@ -1,21 +1,20 @@
 use crate::util;
 use ansi_term::Color;
 use anyhow::Error;
-use structopt::StructOpt;
 use tame_gcs::{
     common::StandardQueryParameters,
     objects::{ListOptional, ListResponse, Metadata, Object},
 };
 
-#[derive(StructOpt, Debug)]
+#[derive(clap::Parser, Debug)]
 pub struct Args {
     /// Recurse into directories, may want to take care with this
     /// as it could consume a lot of memory depending on the contents
     /// you query
-    #[structopt(short = "R", long)]
+    #[structopt(short = 'R', long)]
     recurse: bool,
     /// Displays extended metadata as a table
-    #[structopt(short = "l", long)]
+    #[structopt(short, long)]
     long: bool,
     /// The gs:// url list out
     url: url::Url,
@@ -30,7 +29,7 @@ pub async fn cmd(ctx: &util::RequestContext, args: Args) -> Result<(), Error> {
     let delimiter = if args.recurse { None } else { Some("/") };
     let mut prefix = oid.object().map_or("", |on| on.as_ref()).to_owned();
     if !prefix.is_empty() && !prefix.ends_with('/') {
-        prefix.push('/')
+        prefix.push('/');
     }
 
     let prefix_len = prefix.len();
@@ -47,6 +46,7 @@ pub async fn cmd(ctx: &util::RequestContext, args: Args) -> Result<(), Error> {
             display,
             prefix_len,
             items: Vec::new(),
+            current_year: time::OffsetDateTime::now_utc().year(),
         })
     } else {
         None
@@ -123,7 +123,7 @@ fn print_dir(display: Display, dir: &str) {
             "    {} {} {} {}",
             Color::White.dimmed().paint("-"),
             Color::White.dimmed().paint("  -"),
-            Color::White.dimmed().paint("-- --- --:--:--"),
+            Color::White.dimmed().paint("-- --- --:--"),
             Color::Blue.bold().paint(dir),
         ),
     }
@@ -147,6 +147,8 @@ impl NormalPrinter {
 
         let mut next_dir_iter = indices.iter().enumerate();
         let mut next_dir = next_dir_iter.next();
+
+        let current_year = time::OffsetDateTime::now_utc().year();
 
         for (i, item) in items.into_iter().enumerate() {
             if let Some(nd) = next_dir {
@@ -180,7 +182,8 @@ impl NormalPrinter {
                     };
 
                     let updated = item.updated.unwrap();
-                    let updated_str = updated.format("%d %b %T").to_string();
+
+                    let updated_str = timestamp_str(updated, current_year);
 
                     println!(
                         " {}{} {} {} {}",
@@ -205,6 +208,20 @@ impl NormalPrinter {
     }
 }
 
+fn timestamp_str(ts: time::OffsetDateTime, current_year: i32) -> String {
+    const RECENT: &[time::format_description::FormatItem<'_>] =
+        time::macros::format_description!("[day] [month repr:short] [hour]:[minute]");
+    const OLD: &[time::format_description::FormatItem<'_>] =
+        time::macros::format_description!("[day] [month repr:short]  [year]");
+
+    if ts.year() == current_year {
+        ts.format(&RECENT)
+    } else {
+        ts.format(&OLD)
+    }
+    .unwrap()
+}
+
 struct SimpleMetadata {
     name: String,
     size: u64,
@@ -215,6 +232,7 @@ struct RecursePrinter {
     display: Display,
     prefix_len: usize,
     items: Vec<Vec<SimpleMetadata>>,
+    current_year: i32,
 }
 
 use std::io::Write;
@@ -228,7 +246,7 @@ impl RecursePrinter {
                 size: md.size.unwrap_or_default(),
                 updated: md
                     .updated
-                    .map(|dt| dt.format("%d %b %T").to_string())
+                    .map(|dt| timestamp_str(dt, self.current_year))
                     .unwrap_or_default(),
             })
             .collect();
@@ -282,7 +300,7 @@ impl RecursePrinter {
                                     "    {} {} {} {}",
                                     Color::White.dimmed().paint("-"),
                                     Color::White.dimmed().paint("  -"),
-                                    Color::White.dimmed().paint("-- --- --:--:--"),
+                                    Color::White.dimmed().paint("-- --- --:--"),
                                     Color::Blue.bold().paint(&dir_name[..dir_name.len() - 1]),
                                 )
                                 .unwrap(),
@@ -292,7 +310,7 @@ impl RecursePrinter {
                         }
                         None => match self.display {
                             Display::Normal => {
-                                writeln!(out, "{}", Color::White.paint(scoped_name)).unwrap()
+                                writeln!(out, "{}", Color::White.paint(scoped_name)).unwrap();
                             }
                             Display::Long => {
                                 use number_prefix::NumberPrefix;

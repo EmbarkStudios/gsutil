@@ -1,22 +1,19 @@
 use crate::util;
 use anyhow::{anyhow, Error};
-use structopt::{clap::arg_enum, StructOpt};
 use tame_gcs::{http, signed_url, signing};
 
-arg_enum! {
-    #[derive(Copy, Clone, Debug)]
-    pub enum Method {
-        Get,
-        Post,
-        Put,
-        Delete,
-        Head,
-        Options,
-        Connect,
-        Patch,
-        Trace,
-        Resumable,
-    }
+#[derive(clap::ArgEnum, Copy, Clone, Debug)]
+pub enum Method {
+    Get,
+    Post,
+    Put,
+    Delete,
+    Head,
+    Options,
+    Connect,
+    Patch,
+    Trace,
+    Resumable,
 }
 
 fn parse_duration(src: &str) -> Result<std::time::Duration, Error> {
@@ -42,17 +39,12 @@ fn parse_duration(src: &str) -> Result<std::time::Duration, Error> {
     Ok(duration)
 }
 
-#[derive(StructOpt, Debug)]
+#[derive(clap::Parser, Debug)]
 pub struct Args {
     /// The HTTP method to be used with the signed url.
-    #[structopt(
-        short,
-        default_value = "GET",
-        possible_values = &Method::variants(),
-        case_insensitive = true
-    )]
+    #[clap(arg_enum, short, default_value = "GET", ignore_case = true)]
     method: Method,
-    #[structopt(
+    #[clap(
         short,
         default_value = "1h",
         parse(try_from_str = parse_duration),
@@ -74,11 +66,11 @@ Times may be specified with no suffix (default hours), or one of:
     url: url::Url,
 }
 
-pub async fn cmd(ctx: &util::RequestContext, args: Args) -> Result<(), Error> {
+pub async fn cmd(cred_path: std::path::PathBuf, args: Args) -> Result<(), Error> {
     let oid = util::gs_url_to_object_id(&args.url)?;
 
     let url_signer = signed_url::UrlSigner::with_ring();
-    let service_account = signing::ServiceAccount::load_json_file(&ctx.cred_path)?;
+    let service_account = signing::ServiceAccount::load_json_file(&cred_path)?;
 
     let mut options = signed_url::SignedUrlOptional {
         duration: args.duration,

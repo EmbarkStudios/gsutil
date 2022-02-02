@@ -1,7 +1,6 @@
 use crate::util;
 use anyhow::{anyhow, bail, Context, Error};
 use std::{convert::TryFrom, path::PathBuf};
-use structopt::StructOpt;
 use tame_gcs::objects::{self, Metadata, Object};
 
 fn parse_acl(s: &str) -> Result<tame_gcs::common::PredefinedAcl, String> {
@@ -18,10 +17,10 @@ fn parse_acl(s: &str) -> Result<tame_gcs::common::PredefinedAcl, String> {
     })
 }
 
-#[derive(StructOpt, Debug)]
+#[derive(clap::Parser, Debug)]
 pub struct Args {
     /// Predefined ACL to apply to the destination GCS object
-    #[structopt(short = "a", parse(try_from_str = parse_acl))]
+    #[clap(short = 'a', parse(try_from_str = parse_acl))]
     predef_acl: Option<tame_gcs::common::PredefinedAcl>,
     /// A gs: URL or filepath for the source path to copy from,
     /// wildcards are not currently supported
