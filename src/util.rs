@@ -79,7 +79,6 @@ async fn convert_response(res: reqwest::Response) -> Result<http::Response<bytes
 
 pub struct RequestContext {
     pub client: reqwest::Client,
-    //pub cred_path: std::path::PathBuf,
     pub auth: Arc<oauth::TokenProviderWrapper>,
 }
 
