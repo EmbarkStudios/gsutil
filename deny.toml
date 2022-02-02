@@ -8,24 +8,14 @@ targets = [
 vulnerability = "deny"
 unmaintained = "deny"
 yanked = "deny"
-ignore = [
-
-]
+ignore = ["RUSTSEC-2020-0159", "RUSTSEC-2020-0071"]
 
 [licenses]
 unlicensed = "deny"
-allow = [
-    "Apache-2.0",
-    "BSD-3-Clause",
-    "ISC",
-    "MIT",
-    "MPL-2.0",
-]
+allow = ["Apache-2.0", "BSD-3-Clause", "ISC", "MIT", "MPL-2.0"]
 copyleft = "deny"
 default = "deny"
-exceptions = [
-    { name = "ring", allow = ["ISC", "MIT", "OpenSSL"] },
-]
+exceptions = [{ name = "ring", allow = ["ISC", "MIT", "OpenSSL"] }]
 
 [[licenses.clarify]]
 name = "ring"
@@ -37,24 +27,21 @@ name = "ring"
 # compiled into non-test libraries, is included below."
 # OpenSSL - Obviously
 expression = "ISC AND MIT AND OpenSSL"
-license-files = [
-    { path = "LICENSE", hash = 0xbd0eed23 },
-]
+license-files = [{ path = "LICENSE", hash = 0xbd0eed23 }]
+
+[[licenses.clarify]]
+name = "encoding_rs"
+expression = "(Apache-2.0 OR MIT) AND BSD-3-Clause"
+license-files = [{ path = "COPYRIGHT", hash = 0x39f8ad31 }]
 
 [bans]
 multiple-versions = "deny"
-deny = [
-    { name = "openssl" },
-    { name = "openssl-sys" },
-]
+deny = [{ name = "openssl" }, { name = "openssl-sys" }]
 skip = [
-    # Many crates use the pre-1.0 version
-    { name = "cfg-if", version = "=0.1.10" },
+    # hyper uses this old version
+    { name = "itoa", version = "=0.4.8" },
 ]
-skip-tree = [
-    # hyper uses the pre-1.0 version...and 1.0 version
-    { name = "pin-project", version = "=0.4.27" },
-]
+skip-tree = []
 
 [sources]
 unknown-registry = "deny"
