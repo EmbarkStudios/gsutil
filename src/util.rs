@@ -1,5 +1,5 @@
 use anyhow::{anyhow, Context, Error};
-use std::{convert::TryInto, sync::Arc};
+use std::sync::Arc;
 use tame_gcs::http;
 use tame_oauth::gcp as oauth;
 
@@ -79,8 +79,8 @@ async fn convert_response(res: reqwest::Response) -> Result<http::Response<bytes
 
 pub struct RequestContext {
     pub client: reqwest::Client,
-    pub cred_path: std::path::PathBuf,
-    pub auth: Arc<oauth::ServiceAccountAccess>,
+    //pub cred_path: std::path::PathBuf,
+    pub auth: Arc<oauth::TokenProviderWrapper>,
 }
 
 /// Executes a GCS request via a reqwest client and returns the parsed response/API error
@@ -89,6 +89,8 @@ where
     R: tame_gcs::ApiResponse<bytes::Bytes>,
     B: std::io::Read + Send + 'static,
 {
+    use oauth::TokenProvider;
+
     // First, get our oauth token, which can mean we have to do an additional
     // request if we've never retrieved one yet, or the one we are using has expired
     let token = match ctx.auth.get_token(&[tame_gcs::Scopes::FullControl])? {
@@ -152,8 +154,6 @@ impl GsUrl {
 
 /// Converts a `gs://<bucket_name>/<object_name>` url into a regular object identifer
 pub fn gs_url_to_object_id(url: &url::Url) -> Result<GsUrl, Error> {
-    use std::convert::TryFrom;
-
     match url.scheme() {
         "gs" => {
             let bucket_name = url

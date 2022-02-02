@@ -74,11 +74,11 @@ Times may be specified with no suffix (default hours), or one of:
     url: url::Url,
 }
 
-pub async fn cmd(ctx: &util::RequestContext, args: Args) -> Result<(), Error> {
+pub async fn cmd(cred_path: std::path::PathBuf, args: Args) -> Result<(), Error> {
     let oid = util::gs_url_to_object_id(&args.url)?;
 
     let url_signer = signed_url::UrlSigner::with_ring();
-    let service_account = signing::ServiceAccount::load_json_file(&ctx.cred_path)?;
+    let service_account = signing::ServiceAccount::load_json_file(&cred_path)?;
 
     let mut options = signed_url::SignedUrlOptional {
         duration: args.duration,

@@ -30,7 +30,7 @@ pub async fn cmd(ctx: &util::RequestContext, args: Args) -> Result<(), Error> {
     let delimiter = if args.recurse { None } else { Some("/") };
     let mut prefix = oid.object().map_or("", |on| on.as_ref()).to_owned();
     if !prefix.is_empty() && !prefix.ends_with('/') {
-        prefix.push('/')
+        prefix.push('/');
     }
 
     let prefix_len = prefix.len();
@@ -292,7 +292,7 @@ impl RecursePrinter {
                         }
                         None => match self.display {
                             Display::Normal => {
-                                writeln!(out, "{}", Color::White.paint(scoped_name)).unwrap()
+                                writeln!(out, "{}", Color::White.paint(scoped_name)).unwrap();
                             }
                             Display::Long => {
                                 use number_prefix::NumberPrefix;
