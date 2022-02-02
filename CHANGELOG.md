@@ -1,3 +1,5 @@
+<!-- markdownlint-disable blanks-around-headings blanks-around-lists no-duplicate-heading -->
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -7,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
+### Changed
+- [PR#5](https://github.com/EmbarkStudios/gsutil/pull/5) replaced `structopt` with `clap` and updated dependencies, including `tame-gcs` and `tame-oauth` which gets rid of the bad `chrono` dependency.
+
 ## [0.1.1] - 2021-03-23
 ### Added
 - [PR#3](https://github.com/EmbarkStudios/gsutil/pull/3) added support for the `-a` flag on the [`cp`](https://cloud.google.com/storage/docs/gsutil/commands/cp) command, allowing you to specify a predefined ACL for the destination GCS object.
