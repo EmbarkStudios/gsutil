@@ -1,22 +1,19 @@
 use crate::util;
 use anyhow::{anyhow, Error};
-use structopt::{clap::arg_enum, StructOpt};
 use tame_gcs::{http, signed_url, signing};
 
-arg_enum! {
-    #[derive(Copy, Clone, Debug)]
-    pub enum Method {
-        Get,
-        Post,
-        Put,
-        Delete,
-        Head,
-        Options,
-        Connect,
-        Patch,
-        Trace,
-        Resumable,
-    }
+#[derive(clap::ArgEnum, Copy, Clone, Debug)]
+pub enum Method {
+    Get,
+    Post,
+    Put,
+    Delete,
+    Head,
+    Options,
+    Connect,
+    Patch,
+    Trace,
+    Resumable,
 }
 
 fn parse_duration(src: &str) -> Result<std::time::Duration, Error> {
@@ -42,17 +39,12 @@ fn parse_duration(src: &str) -> Result<std::time::Duration, Error> {
     Ok(duration)
 }
 
-#[derive(StructOpt, Debug)]
+#[derive(clap::Parser, Debug)]
 pub struct Args {
     /// The HTTP method to be used with the signed url.
-    #[structopt(
-        short,
-        default_value = "GET",
-        possible_values = &Method::variants(),
-        case_insensitive = true
-    )]
+    #[clap(arg_enum, short, default_value = "GET", ignore_case = true)]
     method: Method,
-    #[structopt(
+    #[clap(
         short,
         default_value = "1h",
         parse(try_from_str = parse_duration),

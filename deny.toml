@@ -8,7 +8,7 @@ targets = [
 vulnerability = "deny"
 unmaintained = "deny"
 yanked = "deny"
-ignore = ["RUSTSEC-2020-0159", "RUSTSEC-2020-0071"]
+ignore = []
 
 [licenses]
 unlicensed = "deny"
@@ -47,6 +47,3 @@ skip-tree = []
 unknown-registry = "deny"
 unknown-git = "deny"
 allow-git = []
-
-[sources.allow-org]
-#github = [""]

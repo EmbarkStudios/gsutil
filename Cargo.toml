@@ -21,6 +21,8 @@ ansi_term = "0.12"
 anyhow = "1.0"
 # Buffer helpers
 bytes = "1.0"
+# Argument parsing
+clap = { version = "3.0", features = ["derive", "env"] }
 # For futures helpers
 futures-util = { version = "0.3", default-features = false }
 # Human friendly byte sizes
@@ -32,12 +34,12 @@ reqwest = { version = "0.11", default-features = false, features = [
 ] }
 # JSON serialization
 serde_json = "1.0"
-# Argument parsing
-structopt = "0.3"
 # GCS requests
-tame-gcs = { version = "0.10", features = ["signing"] }
+tame-gcs = { version = "0.11", features = ["signing"] }
 # Authentication
-tame-oauth = { version = "0.6", features = ["gcp"] }
+tame-oauth = { version = "0.7", features = ["gcp"] }
+# Timestamp formatting
+time = { version = "0.3", features = ["formatting", "macros"] }
 # Async runtime
 tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
 # Url parsing
