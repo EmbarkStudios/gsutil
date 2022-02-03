@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
+### Fixed
+- [PR#6](https://github.com/EmbarkStudios/gsutil/pull/6) fixed an issue where passing in credentials via `-c` would be prioritized lower than the default token provider.
+
 ## [0.1.2] - 2022-02-02
 ### Changed
 - [PR#5](https://github.com/EmbarkStudios/gsutil/pull/5) replaced `structopt` with `clap` and updated dependencies, including `tame-gcs` and `tame-oauth` which gets rid of the bad `chrono` dependency.
