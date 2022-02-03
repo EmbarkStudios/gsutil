@@ -116,26 +116,24 @@ struct Opts {
 }
 
 async fn real_main() -> Result<(), anyhow::Error> {
+    use anyhow::Context as _;
     use clap::Parser;
+
     let args = Opts::parse();
 
     let client = reqwest::Client::builder().build()?;
 
-    let token_provider = if let Some(provider) =
-        tame_oauth::gcp::TokenProviderWrapper::get_default_provider()?
-    {
-        provider
-    } else {
-        let cred_path = args
-            .credentials
-            .as_ref()
-            .ok_or_else(|| anyhow::anyhow!("credentials not specified"))?;
-
-        let svc_account_info =
-            tame_oauth::gcp::ServiceAccountInfo::deserialize(std::fs::read_to_string(cred_path)?)?;
-        tame_oauth::gcp::TokenProviderWrapper::ServiceAccount(
-            tame_oauth::gcp::ServiceAccountProvider::new(svc_account_info)?,
-        )
+    let token_provider = match &args.credentials {
+        Some(cred_path) => {
+            let svc_account_info = tame_oauth::gcp::ServiceAccountInfo::deserialize(
+                std::fs::read_to_string(cred_path)?,
+            )?;
+            tame_oauth::gcp::TokenProviderWrapper::ServiceAccount(
+                tame_oauth::gcp::ServiceAccountProvider::new(svc_account_info)?,
+            )
+        }
+        None => tame_oauth::gcp::TokenProviderWrapper::get_default_provider()?
+            .context("unable to determine default token provider")?,
     };
 
     let ctx = gsutil::util::RequestContext {
