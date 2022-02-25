@@ -19,7 +19,7 @@ pub enum Method {
 fn parse_duration(src: &str) -> Result<std::time::Duration, Error> {
     use std::time::Duration;
 
-    let suffix_pos = src.find(char::is_alphabetic).unwrap_or_else(|| src.len());
+    let suffix_pos = src.find(char::is_alphabetic).unwrap_or(src.len());
 
     let num: u64 = src[..suffix_pos].parse()?;
     let suffix = if suffix_pos == src.len() {
