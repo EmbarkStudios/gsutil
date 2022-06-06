@@ -77,6 +77,7 @@ async fn convert_response(res: reqwest::Response) -> Result<http::Response<bytes
     Ok(builder.body(buffer.freeze())?)
 }
 
+#[derive(Clone)]
 pub struct RequestContext {
     pub client: reqwest::Client,
     pub auth: Arc<oauth::TokenProviderWrapper>,
