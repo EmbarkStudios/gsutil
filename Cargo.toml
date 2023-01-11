@@ -16,13 +16,13 @@ keywords = ["gcs", "ci"]
 
 [dependencies]
 # Colors!
-ansi_term = "0.12"
+nu-ansi-term = "0.46"
 # Friendly error handling
 anyhow = "1.0"
 # Buffer helpers
 bytes = "1.0"
 # Argument parsing
-clap = { version = "3.0", features = ["derive", "env"] }
+clap = { version = "4.0", features = ["derive", "env"] }
 # For futures helpers
 futures-util = { version = "0.3", default-features = false }
 # Human friendly byte sizes
@@ -35,9 +35,9 @@ reqwest = { version = "0.11", default-features = false, features = [
 # JSON serialization
 serde_json = "1.0"
 # GCS requests
-tame-gcs = { version = "0.11", features = ["signing"] }
+tame-gcs = { version = "0.12", features = ["signing"] }
 # Authentication
-tame-oauth = { version = "0.7", features = ["gcp"] }
+tame-oauth = { version = "0.8", features = ["gcp"] }
 # Timestamp formatting
 time = { version = "0.3", features = ["formatting", "macros"] }
 # Async runtime

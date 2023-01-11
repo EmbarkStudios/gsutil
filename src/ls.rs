@@ -1,9 +1,8 @@
 use crate::util;
-use ansi_term::Color;
-use anyhow::Error;
+use nu_ansi_term::Color;
 use tame_gcs::{
     common::StandardQueryParameters,
-    objects::{ListOptional, ListResponse, Metadata, Object},
+    objects::{ListOptional, ListResponse, Metadata},
 };
 
 #[derive(clap::Parser, Debug)]
@@ -23,7 +22,7 @@ pub struct Args {
 /// Does an ls of a gs bucket minus the prefix specified by the user, this
 /// tries to mimic [exa](https://github.com/ogham/exa) when it can. Would also
 /// be good to support <https://github.com/ogham/exa/blob/master/src/info/filetype.rs> at some point
-pub async fn cmd(ctx: &util::RequestContext, args: Args) -> Result<(), Error> {
+pub async fn cmd(ctx: &util::RequestContext, args: Args) -> anyhow::Result<()> {
     let oid = util::gs_url_to_object_id(&args.url)?;
 
     let delimiter = if args.recurse { None } else { Some("/") };
@@ -68,7 +67,7 @@ pub async fn cmd(ctx: &util::RequestContext, args: Args) -> Result<(), Error> {
 
     let mut page_token: Option<String> = None;
     loop {
-        let ls_req = Object::list(
+        let ls_req = ctx.obj.list(
             oid.bucket(),
             Some(ListOptional {
                 delimiter,
@@ -255,7 +254,7 @@ impl RecursePrinter {
     }
 
     fn print(&self) {
-        let mut stdout = std::io::stdout();
+        let mut stdout = std::io::stdout().lock();
 
         let mut dirs = vec![String::new()];
 
@@ -266,11 +265,9 @@ impl RecursePrinter {
 
             dirs.extend(self.print_dir(dir, &mut stdout));
         }
-
-        drop(stdout);
     }
 
-    fn print_dir(&self, dir: String, out: &mut std::io::Stdout) -> Vec<String> {
+    fn print_dir(&self, dir: String, out: &mut std::io::StdoutLock<'static>) -> Vec<String> {
         let mut new_dirs = Vec::new();
 
         for set in &self.items {
@@ -343,7 +340,7 @@ impl RecursePrinter {
             }
         }
 
-        // The directories act a queue, so reverse them so they are sorted correctly
+        // The directories act as a queue, so reverse them so they are sorted correctly
         new_dirs.reverse();
         new_dirs
     }

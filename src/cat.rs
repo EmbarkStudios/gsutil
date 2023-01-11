@@ -1,5 +1,5 @@
 use crate::util;
-use tame_gcs::{http, objects::Object};
+use tame_gcs::http;
 
 #[derive(clap::Parser, Debug)]
 pub struct Args {
@@ -23,10 +23,10 @@ last numbytes of the object."
     url: url::Url,
 }
 
-pub async fn cmd(ctx: &util::RequestContext, args: Args) -> Result<(), anyhow::Error> {
+pub async fn cmd(ctx: &util::RequestContext, args: Args) -> anyhow::Result<()> {
     let oid = util::gs_url_to_object_id(&args.url)?;
 
-    let mut download_req = Object::download(
+    let mut download_req = ctx.obj.download(
         &(
             oid.bucket(),
             oid.object()
@@ -41,7 +41,7 @@ pub async fn cmd(ctx: &util::RequestContext, args: Args) -> Result<(), anyhow::E
         // handle nefarious users for us
         download_req.headers_mut().insert(
             http::header::RANGE,
-            http::header::HeaderValue::from_str(&format!("bytes={}", range))?,
+            http::header::HeaderValue::from_str(&format!("bytes={range}"))?,
         );
     }
 
