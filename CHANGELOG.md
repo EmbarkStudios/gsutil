@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
+### Changed
+- [PR#10](https://github.com/EmbarkStudios/gsutil/pull/10) updated dependencies.
+
+### Added
+- [PR#10](https://github.com/EmbarkStudios/gsutil/pull/10) added releases for `aarch64-unknown-linux-musl`.
+
 ## [0.1.3] - 2022-02-03
 ### Fixed
 - [PR#6](https://github.com/EmbarkStudios/gsutil/pull/6) fixed an issue where passing in credentials via `-c` would be prioritized lower than the default token provider.
