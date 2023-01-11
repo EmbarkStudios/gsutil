@@ -1,5 +1,5 @@
 use crate::util;
-use tame_gcs::objects::Object;
+use anyhow::Context as _;
 
 #[derive(clap::Parser, Debug)]
 pub struct Args {
@@ -7,14 +7,13 @@ pub struct Args {
     url: url::Url,
 }
 
-pub async fn cmd(ctx: &util::RequestContext, args: Args) -> Result<(), anyhow::Error> {
+pub async fn cmd(ctx: &util::RequestContext, args: Args) -> anyhow::Result<()> {
     let oid = util::gs_url_to_object_id(&args.url)?;
 
-    let del_req = Object::delete(
+    let del_req = ctx.obj.delete(
         &(
             oid.bucket(),
-            oid.object()
-                .ok_or_else(|| anyhow::anyhow!("invalid object name specified"))?,
+            oid.object().context("invalid object name specified")?,
         ),
         None,
     )?;

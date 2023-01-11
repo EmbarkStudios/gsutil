@@ -1,13 +1,13 @@
-use anyhow::{anyhow, Context, Error};
+use anyhow::Context as _;
 use std::sync::Arc;
-use tame_gcs::http;
+use tame_gcs::{self as tgcs, http};
 use tame_oauth::gcp as oauth;
 
 /// Converts a vanilla `http::Request` into a `reqwest::Request`
 async fn convert_request<B>(
     req: http::Request<B>,
     client: &reqwest::Client,
-) -> Result<reqwest::Request, Error>
+) -> anyhow::Result<reqwest::Request>
 where
     B: std::io::Read + Send + 'static,
 {
@@ -21,7 +21,7 @@ where
         http::Method::DELETE => client.delete(&uri),
         http::Method::PATCH => client.patch(&uri),
         http::Method::PUT => client.put(&uri),
-        method => return Err(anyhow!("{} not implemented", method)),
+        method => anyhow::bail!("'{method}' not implemented"),
     };
 
     let content_len = tame_gcs::util::get_content_length(&parts.headers).unwrap_or(0);
@@ -47,14 +47,14 @@ where
 
 /// Converts a `reqwest::Response` into a vanilla `http::Response`. This currently copies
 /// the entire response body into a single buffer with no streaming
-async fn convert_response(res: reqwest::Response) -> Result<http::Response<bytes::Bytes>, Error> {
+async fn convert_response(res: reqwest::Response) -> anyhow::Result<http::Response<bytes::Bytes>> {
     let mut builder = http::Response::builder()
         .status(res.status())
         .version(res.version());
 
     let headers = builder
         .headers_mut()
-        .ok_or_else(|| anyhow!("failed to convert response headers"))?;
+        .context("failed to convert response headers")?;
 
     headers.extend(
         res.headers()
@@ -81,12 +81,13 @@ async fn convert_response(res: reqwest::Response) -> Result<http::Response<bytes
 pub struct RequestContext {
     pub client: reqwest::Client,
     pub auth: Arc<oauth::TokenProviderWrapper>,
+    pub obj: tgcs::objects::Object,
 }
 
 /// Executes a GCS request via a reqwest client and returns the parsed response/API error
-pub async fn execute<B, R>(ctx: &RequestContext, mut req: http::Request<B>) -> Result<R, Error>
+pub async fn execute<B, R>(ctx: &RequestContext, mut req: http::Request<B>) -> anyhow::Result<R>
 where
-    R: tame_gcs::ApiResponse<bytes::Bytes>,
+    R: tgcs::ApiResponse<bytes::Bytes>,
     B: std::io::Read + Send + 'static,
 {
     use oauth::TokenProvider;
@@ -138,8 +139,8 @@ where
 }
 
 pub struct GsUrl {
-    bucket_name: tame_gcs::BucketName<'static>,
-    obj_name: Option<tame_gcs::ObjectName<'static>>,
+    bucket_name: tgcs::BucketName<'static>,
+    obj_name: Option<tgcs::ObjectName<'static>>,
 }
 
 impl GsUrl {
@@ -153,12 +154,10 @@ impl GsUrl {
 }
 
 /// Converts a `gs://<bucket_name>/<object_name>` url into a regular object identifer
-pub fn gs_url_to_object_id(url: &url::Url) -> Result<GsUrl, Error> {
+pub fn gs_url_to_object_id(url: &url::Url) -> anyhow::Result<GsUrl> {
     match url.scheme() {
         "gs" => {
-            let bucket_name = url
-                .host_str()
-                .ok_or_else(|| anyhow!("no bucket specified"))?;
+            let bucket_name = url.host_str().context("no bucket specified")?;
             // Skip first /
             let object_name = &url.path()[1..];
 
@@ -167,6 +166,6 @@ pub fn gs_url_to_object_id(url: &url::Url) -> Result<GsUrl, Error> {
                 obj_name: tame_gcs::ObjectName::try_from(String::from(object_name)).ok(),
             })
         }
-        scheme => Err(anyhow!("invalid url scheme: {}", scheme)),
+        scheme => anyhow::bail!("invalid url scheme: {scheme}"),
     }
 }

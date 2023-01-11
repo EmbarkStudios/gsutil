@@ -1,6 +1,5 @@
 use crate::util;
-use anyhow::Error;
-use tame_gcs::objects::Object;
+use anyhow::Context as _;
 
 #[derive(clap::Parser, Debug)]
 pub struct Args {
@@ -8,14 +7,13 @@ pub struct Args {
     url: url::Url,
 }
 
-pub async fn cmd(ctx: &util::RequestContext, args: Args) -> Result<(), Error> {
+pub async fn cmd(ctx: &util::RequestContext, args: Args) -> anyhow::Result<()> {
     let oid = util::gs_url_to_object_id(&args.url)?;
 
-    let get_req = Object::get(
+    let get_req = ctx.obj.get(
         &(
             oid.bucket(),
-            oid.object()
-                .ok_or_else(|| anyhow::anyhow!("invalid object name specified"))?,
+            oid.object().context("invalid object name specified")?,
         ),
         None,
     )?;
@@ -24,7 +22,7 @@ pub async fn cmd(ctx: &util::RequestContext, args: Args) -> Result<(), Error> {
     let md = get_res.metadata;
 
     // Print out the information the same way gsutil does, except with RFC-2822 date formatting
-    println!("{}", ansi_term::Color::Cyan.paint(args.url.as_str()));
+    println!("{}", nu_ansi_term::Color::Cyan.paint(args.url.as_str()));
     println!(
         "    Creation time:\t{}",
         md.time_created
@@ -51,7 +49,7 @@ pub async fn cmd(ctx: &util::RequestContext, args: Args) -> Result<(), Error> {
 
     if let Some(md) = &md.metadata {
         for (k, v) in md {
-            println!("        {}:\t\t{}", k, v);
+            println!("        {k}:\t\t{v}");
         }
     }
 
