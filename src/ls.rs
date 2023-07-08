@@ -1,4 +1,4 @@
-use crate::util;
+use crate::{color::ColorCtx, util};
 use nu_ansi_term::Color;
 use tame_gcs::{
     common::StandardQueryParameters,
@@ -40,8 +40,11 @@ pub async fn cmd(ctx: &util::RequestContext, args: Args) -> anyhow::Result<()> {
         Display::Normal
     };
 
+    let cc = ColorCtx::from_env();
+
     let mut recurse = if args.recurse {
         Some(RecursePrinter {
+            cc,
             display,
             prefix_len,
             items: Vec::new(),
@@ -53,6 +56,7 @@ pub async fn cmd(ctx: &util::RequestContext, args: Args) -> anyhow::Result<()> {
 
     let normal = if !args.recurse {
         Some(NormalPrinter {
+            cc,
             display,
             prefix_len,
         })
@@ -111,25 +115,28 @@ enum Display {
 }
 
 struct NormalPrinter {
+    cc: ColorCtx,
     display: Display,
     prefix_len: usize,
 }
 
-fn print_dir(display: Display, dir: &str) {
+fn print_dir(cc: &ColorCtx, display: Display, dir: &str) {
     match display {
-        Display::Normal => println!("{}", Color::Blue.bold().paint(dir)),
+        Display::Normal => println!("{}", cc.paint(Color::Blue.bold(), dir)),
         Display::Long => println!(
             "    {} {} {} {}",
-            Color::White.dimmed().paint("-"),
-            Color::White.dimmed().paint("  -"),
-            Color::White.dimmed().paint("-- --- --:--"),
-            Color::Blue.bold().paint(dir),
+            cc.paint(Color::White.dimmed(), "-"),
+            cc.paint(Color::White.dimmed(), "  -"),
+            cc.paint(Color::White.dimmed(), "-- --- --:--"),
+            cc.paint(Color::Blue.bold(), dir),
         ),
     }
 }
 
 impl NormalPrinter {
     fn print(&self, items: Vec<Metadata>, prefixes: Vec<String>) {
+        let cc = &self.cc;
+
         let indices = {
             // Determine at which indices we should place the "directories"
             let mut indices = Vec::with_capacity(prefixes.len());
@@ -155,7 +162,7 @@ impl NormalPrinter {
                     let dir = &(&prefixes[nd.0])[self.prefix_len..];
                     let dir = &dir[..dir.len() - 1]; // Remove trailing delimiter
 
-                    print_dir(self.display, dir);
+                    print_dir(&self.cc, self.display, dir);
 
                     next_dir = next_dir_iter.next();
                 }
@@ -164,7 +171,7 @@ impl NormalPrinter {
             let filename = &item.name.unwrap()[self.prefix_len..];
 
             match self.display {
-                Display::Normal => println!("{}", Color::White.paint(filename)),
+                Display::Normal => println!("{}", cc.paint(Color::White, filename)),
                 Display::Long => {
                     use number_prefix::NumberPrefix;
 
@@ -187,10 +194,10 @@ impl NormalPrinter {
                     println!(
                         " {}{} {} {} {}",
                         if size_str.len() < 4 { " " } else { "" },
-                        Color::Green.paint(size_str),
-                        Color::Yellow.paint("gcs"),
-                        Color::Blue.paint(updated_str),
-                        Color::White.paint(filename),
+                        cc.paint(Color::Green, size_str),
+                        cc.paint(Color::Yellow, "gcs"),
+                        cc.paint(Color::Blue, updated_str),
+                        cc.paint(Color::White, filename),
                     );
                 }
             }
@@ -200,7 +207,7 @@ impl NormalPrinter {
             let dir = &(&prefixes[nd.0])[self.prefix_len..];
             let dir = &dir[..dir.len() - 1]; // Remove trailing delimiter
 
-            print_dir(self.display, dir);
+            print_dir(&self.cc, self.display, dir);
 
             next_dir = next_dir_iter.next();
         }
@@ -228,6 +235,7 @@ struct SimpleMetadata {
 }
 
 struct RecursePrinter {
+    cc: ColorCtx,
     display: Display,
     prefix_len: usize,
     items: Vec<Vec<SimpleMetadata>>,
@@ -268,6 +276,7 @@ impl RecursePrinter {
     }
 
     fn print_dir(&self, dir: String, out: &mut std::io::StdoutLock<'static>) -> Vec<String> {
+        let cc = &self.cc;
         let mut new_dirs = Vec::new();
 
         for set in &self.items {
@@ -289,16 +298,16 @@ impl RecursePrinter {
                                 Display::Normal => writeln!(
                                     out,
                                     "{}",
-                                    Color::Blue.bold().paint(&dir_name[..dir_name.len() - 1])
+                                    cc.paint(Color::Blue.bold(), &dir_name[..dir_name.len() - 1])
                                 )
                                 .unwrap(),
                                 Display::Long => writeln!(
                                     out,
                                     "    {} {} {} {}",
-                                    Color::White.dimmed().paint("-"),
-                                    Color::White.dimmed().paint("  -"),
-                                    Color::White.dimmed().paint("-- --- --:--"),
-                                    Color::Blue.bold().paint(&dir_name[..dir_name.len() - 1]),
+                                    cc.paint(Color::White.dimmed(), "-"),
+                                    cc.paint(Color::White.dimmed(), "  -"),
+                                    cc.paint(Color::White.dimmed(), "-- --- --:--"),
+                                    cc.paint(Color::Blue.bold(), &dir_name[..dir_name.len() - 1]),
                                 )
                                 .unwrap(),
                             }
@@ -307,7 +316,7 @@ impl RecursePrinter {
                         }
                         None => match self.display {
                             Display::Normal => {
-                                writeln!(out, "{}", Color::White.paint(scoped_name)).unwrap();
+                                writeln!(out, "{}", cc.paint(Color::White, scoped_name)).unwrap();
                             }
                             Display::Long => {
                                 use number_prefix::NumberPrefix;
@@ -327,10 +336,10 @@ impl RecursePrinter {
                                     out,
                                     " {}{} {} {} {}",
                                     if size_str.len() < 4 { " " } else { "" },
-                                    Color::Green.paint(size_str),
-                                    Color::Yellow.paint("gcs"),
-                                    Color::Blue.paint(&item.updated),
-                                    Color::White.paint(scoped_name),
+                                    cc.paint(Color::Green, size_str),
+                                    cc.paint(Color::Yellow, "gcs"),
+                                    cc.paint(Color::Blue, &item.updated),
+                                    cc.paint(Color::White, scoped_name),
                                 )
                                 .unwrap();
                             }

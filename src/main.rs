@@ -80,10 +80,14 @@ async fn real_main() -> anyhow::Result<()> {
 
 #[tokio::main]
 async fn main() {
+    let cc = gsutil::color::ColorCtx::from_env();
     match real_main().await {
         Ok(_) => {}
         Err(e) => {
-            eprintln!("{}", nu_ansi_term::Color::Red.paint(format!("{e:?}")));
+            eprintln!(
+                "{}",
+                cc.paint_err(nu_ansi_term::Color::Red, format!("{e:?}"))
+            );
             #[allow(clippy::exit)]
             std::process::exit(1);
         }
