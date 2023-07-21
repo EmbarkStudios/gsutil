@@ -16,7 +16,7 @@ keywords = ["gcs", "ci"]
 
 [dependencies]
 # Colors!
-nu-ansi-term = "0.46"
+nu-ansi-term = "0.48"
 # Friendly error handling
 anyhow = "1.0"
 # Buffer helpers
@@ -37,7 +37,7 @@ serde_json = "1.0"
 # GCS requests
 tame-gcs = { version = "0.12", features = ["signing"] }
 # Authentication
-tame-oauth = { version = "0.8", features = ["gcp"] }
+tame-oauth = { version = "0.9", features = ["gcp"] }
 # Timestamp formatting
 time = { version = "0.3", features = ["formatting", "macros"] }
 # Async runtime

@@ -16,8 +16,12 @@ allow = ["Apache-2.0", "BSD-3-Clause", "ISC", "MIT", "MPL-2.0"]
 copyleft = "deny"
 default = "deny"
 exceptions = [
-    { allow = ["OpenSSL"], name = "ring" },
-    { allow = ["Unicode-DFS-2016"], name = "unicode-ident" },
+    { allow = [
+        "OpenSSL",
+    ], name = "ring" },
+    { allow = [
+        "Unicode-DFS-2016",
+    ], name = "unicode-ident" },
 ]
 
 [[licenses.clarify]]
@@ -40,10 +44,7 @@ license-files = [{ path = "COPYRIGHT", hash = 0x39f8ad31 }]
 [bans]
 multiple-versions = "deny"
 deny = [{ name = "openssl" }, { name = "openssl-sys" }]
-skip = [
-    # several crates (including ours) use this old version
-    { name = "base64", version = "=0.13.1" },
-]
+skip = []
 skip-tree = []
 
 [sources]
