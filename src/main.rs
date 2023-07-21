@@ -46,8 +46,12 @@ async fn real_main() -> anyhow::Result<()> {
             let svc_account_info = tame_oauth::gcp::ServiceAccountInfo::deserialize(
                 std::fs::read_to_string(cred_path)?,
             )?;
-            tame_oauth::gcp::TokenProviderWrapper::ServiceAccount(
-                tame_oauth::gcp::ServiceAccountProvider::new(svc_account_info)?,
+            tame_oauth::gcp::TokenProviderWrapper::wrap(
+                tame_oauth::gcp::TokenProviderWrapperInner::ServiceAccount(
+                    tame_oauth::gcp::service_account::ServiceAccountProviderInner::new(
+                        svc_account_info,
+                    )?,
+                ),
             )
         }
         None => tame_oauth::gcp::TokenProviderWrapper::get_default_provider()?
