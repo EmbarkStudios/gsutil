@@ -159,7 +159,11 @@ pub fn gs_url_to_object_id(url: &url::Url) -> anyhow::Result<GsUrl> {
         "gs" => {
             let bucket_name = url.host_str().context("no bucket specified")?;
             // Skip first /
-            let object_name = &url.path()[1..];
+            let object_name = if url.path().is_empty() {
+                ""
+            } else {
+                &url.path()[1..]
+            };
 
             Ok(GsUrl {
                 bucket_name: tame_gcs::BucketName::try_from(String::from(bucket_name))?,
