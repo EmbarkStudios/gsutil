@@ -13,10 +13,11 @@ homepage = "https://github.com/EmbarkStudios/gsutil"
 repository = "https://github.com/EmbarkStudios/gsutil"
 categories = ["command-line-utilities"]
 keywords = ["gcs", "ci"]
+rust-version = "1.70.0"
 
 [dependencies]
 # Colors!
-nu-ansi-term = "0.48"
+nu-ansi-term = "0.49"
 # Friendly error handling
 anyhow = "1.0"
 # Buffer helpers
