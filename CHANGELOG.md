@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
+### Fixed
+- [PR#14](https://github.com/EmbarkStudios/gsutil/pull/14) fixed a panic if the url didn't contain a path component. Thanks [@wchargin](https://github.com/wchargin)!
+
+### Changed
+- [PR#13](https://github.com/EmbarkStudios/gsutil/pull/13) resolved [#11](https://github.com/EmbarkStudios/gsutil/issues/11) by detecting if stdout is a TTY or `NO_COLOR` is set. Thanks [@wchargin](https://github.com/wchargin)!
+
 ## [0.2.0] - 2023-01-11
 ### Changed
 - [PR#10](https://github.com/EmbarkStudios/gsutil/pull/10) updated dependencies.
