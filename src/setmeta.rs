@@ -1,4 +1,4 @@
-use crate::util;
+use crate::{color::ColorCtx, util};
 use anyhow::Context as _;
 
 #[derive(clap::Parser, Debug)]
@@ -10,6 +10,8 @@ pub struct Args {
 }
 
 pub async fn cmd(ctx: &util::RequestContext, args: Args) -> anyhow::Result<()> {
+    let cc = ColorCtx::from_env();
+
     let oid = util::gs_url_to_object_id(&args.url)?;
 
     let md: tame_gcs::objects::Metadata = serde_json::from_str(&args.json)?;
@@ -28,7 +30,7 @@ pub async fn cmd(ctx: &util::RequestContext, args: Args) -> anyhow::Result<()> {
     let md = get_res.metadata;
 
     // Print out the information the same way gsutil does, except with RFC-2822 date formatting
-    println!("{}", nu_ansi_term::Color::Cyan.paint(args.url.as_str()));
+    println!("{}", cc.paint(nu_ansi_term::Color::Cyan, args.url.as_str()));
     println!(
         "    Creation time:\t{}",
         md.time_created
