@@ -157,9 +157,9 @@ impl NormalPrinter {
         let current_year = time::OffsetDateTime::now_utc().year();
 
         for (i, item) in items.into_iter().enumerate() {
-            if let Some(nd) = next_dir {
-                if *nd.1 == i {
-                    let dir = &(&prefixes[nd.0])[self.prefix_len..];
+            if let Some(dir) = next_dir {
+                if *dir.1 == i {
+                    let dir = &(&prefixes[dir.0])[self.prefix_len..];
                     let dir = &dir[..dir.len() - 1]; // Remove trailing delimiter
 
                     print_dir(&self.cc, self.display, dir);
@@ -203,8 +203,8 @@ impl NormalPrinter {
             }
         }
 
-        while let Some(nd) = next_dir {
-            let dir = &(&prefixes[nd.0])[self.prefix_len..];
+        while let Some(dir) = next_dir {
+            let dir = &(&prefixes[dir.0])[self.prefix_len..];
             let dir = &dir[..dir.len() - 1]; // Remove trailing delimiter
 
             print_dir(&self.cc, self.display, dir);
