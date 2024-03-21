@@ -72,6 +72,12 @@ jobs:
       - name: cargo publish
         run: cargo publish --dry-run --all-features --target ${{ matrix.target }}
 
+  test_success:
+    runs-on: ubuntu-22.04
+    needs: [lint,test,publish-check,deny-check]
+    steps:
+    - run: echo "All test jobs passed"
+
   release:
     name: Release
     if: startsWith(github.ref, 'refs/tags/')
