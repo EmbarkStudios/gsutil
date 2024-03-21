@@ -60,7 +60,7 @@ pub struct Args {
     #[clap(
         short,
         default_value = "1h",
-        long_help = "The duration that ths signed url will be valid for.
+        long_help = "The duration that the signed url will be valid for.
 
 Times may be specified with no suffix (default hours), or one of:
 * (s)econds

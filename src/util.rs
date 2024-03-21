@@ -153,7 +153,7 @@ impl GsUrl {
     }
 }
 
-/// Converts a `gs://<bucket_name>/<object_name>` url into a regular object identifer
+/// Converts a `gs://<bucket_name>/<object_name>` url into a regular object identifier
 pub fn gs_url_to_object_id(url: &url::Url) -> anyhow::Result<GsUrl> {
     match url.scheme() {
         "gs" => {
