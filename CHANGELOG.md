@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
+### Changed
+- [PR#20](https://github.com/EmbarkStudios/gsutil/pull/20) updated dependencies, notably moving to `http` 1.1 by updating `reqwest`, `tame-oauth`, and `tame-gcs`.
+
 ## [0.2.1] - 2023-07-31
 ### Fixed
 - [PR#14](https://github.com/EmbarkStudios/gsutil/pull/14) fixed a panic if the url didn't contain a path component. Thanks [@wchargin](https://github.com/wchargin)!
