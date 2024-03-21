@@ -1,20 +1,18 @@
+[graph]
 targets = [
-    { triple = "x86_64-unknown-linux-musl" },
-    { triple = "x86_64-pc-windows-msvc" },
-    { triple = "x86_64-apple-darwin" },
+    "x86_64-unknown-linux-musl",
+    "x86_64-pc-windows-msvc",
+    "x86_64-apple-darwin",
 ]
+all-features = true
 
 [advisories]
-vulnerability = "deny"
-unmaintained = "deny"
-yanked = "deny"
+version = 2
 ignore = []
 
 [licenses]
-unlicensed = "deny"
+version = 2
 allow = ["Apache-2.0", "BSD-3-Clause", "ISC", "MIT", "MPL-2.0"]
-copyleft = "deny"
-default = "deny"
 exceptions = [
     { allow = [
         "OpenSSL",
@@ -45,7 +43,9 @@ license-files = [{ path = "COPYRIGHT", hash = 0x39f8ad31 }]
 multiple-versions = "deny"
 deny = [{ name = "openssl" }, { name = "openssl-sys" }]
 skip = []
-skip-tree = []
+skip-tree = [
+    { crate = "windows-sys@0.48.0", reason = "mio uses ancient version" },
+]
 
 [sources]
 unknown-registry = "deny"
